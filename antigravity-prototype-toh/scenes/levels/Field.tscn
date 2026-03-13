@@ -20,6 +20,9 @@ albedo_color = Color(0.2, 0.5, 0.2, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_wall"]
 size = Vector3(40, 2, 1)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_inner_wall"]
+size = Vector3(20, 2, 1)
+
 [node name="Field" type="Node3D"]
 script = ExtResource("10_field")
 
@@ -82,7 +85,7 @@ material = SubResource("StandardMaterial3D_floor")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/InnerWall1"]
-shape = SubResource("BoxShape3D_wall")
+shape = SubResource("BoxShape3D_inner_wall")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D/InnerWall1"]
 size = Vector3(20, 2, 1)
@@ -92,7 +95,7 @@ material = SubResource("StandardMaterial3D_floor")
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 10, 1, -10)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/InnerWall2"]
-shape = SubResource("BoxShape3D_wall")
+shape = SubResource("BoxShape3D_inner_wall")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D/InnerWall2"]
 size = Vector3(20, 2, 1)
