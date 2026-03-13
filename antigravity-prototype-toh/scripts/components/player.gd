@@ -19,6 +19,14 @@ var input_vector: Vector2 = Vector2.ZERO
 var attack_timer: float = 0.0
 var gather_timer: float = 0.0
 
+var current_wood: int = 0
+var current_stone: int = 0
+
+const TargetMarkerScene = preload("res://scenes/ui/TargetMarker.tscn")
+const GatherProgressScene = preload("res://scenes/ui/GatherProgress.tscn")
+var active_marker: Node3D = null
+var active_progress: Node3D = null
+
 @onready var sprite = $Sprite3D
 @onready var enemy_detector: Area3D = $EnemyDetectionRange
 @onready var gather_detector: Area3D = $GatheringRange
@@ -56,7 +64,8 @@ func _change_state(new_state: State) -> void:
 	if current_state == new_state:
 		return
 		
-	# 状態を抜ける時の処理（あれば）
+	# 状態を抜ける時の処理
+	_clear_ui_markers()
 	
 	current_state = new_state
 	
@@ -64,13 +73,17 @@ func _change_state(new_state: State) -> void:
 	if current_state == State.IDLE:
 		_scan_surroundings()
 
+func _clear_ui_markers() -> void:
+	if is_instance_valid(active_marker):
+		active_marker.queue_free()
+	if is_instance_valid(active_progress):
+		active_progress.queue_free()
+
 func _update_state(delta: float = 0.0) -> void:
 	match current_state:
 		State.IDLE:
-			# IDLEになった瞬間にスキャンしているが、毎フレーム敵が来た場合の監視も必要
 			_scan_surroundings()
 		State.MOVE:
-			# 移動に専念（攻撃や採取のタイマーはリセットしても良い）
 			attack_timer = 0.0
 			gather_timer = 0.0
 		State.ATTACK:
@@ -78,14 +91,16 @@ func _update_state(delta: float = 0.0) -> void:
 			if not target:
 				_change_state(State.IDLE)
 			else:
-				# 自動攻撃処理
+				if not is_instance_valid(active_marker):
+					active_marker = TargetMarkerScene.instantiate()
+					target.add_child(active_marker)
+				
 				attack_timer -= delta
 				if attack_timer <= 0.0:
 					if target.has_method("take_damage"):
 						target.take_damage(attack_damage)
 					attack_timer = attack_interval
 		State.GATHER:
-			# 敵が現れたら即座にATTACKに移行するため監視
 			if _get_closest_enemy() != null:
 				_change_state(State.ATTACK)
 				return
@@ -94,12 +109,34 @@ func _update_state(delta: float = 0.0) -> void:
 			if not target:
 				_change_state(State.IDLE)
 			else:
-				# 自動採取処理
+				if not is_instance_valid(active_progress):
+					active_progress = GatherProgressScene.instantiate()
+					target.add_child(active_progress)
+					
 				gather_timer -= delta
+				
+				# プログレスバーUIの更新
+				var pbar = active_progress.get_node("SubViewport/ProgressBar")
+				if pbar:
+					# 1.0がMax, 0.0が完了とするような割合計算
+					pbar.value = 1.0 - (gather_timer / gather_interval)
+				
 				if gather_timer <= 0.0:
 					if target.has_method("gather"):
-						target.gather()
+						var success = target.gather()
+						if success:
+							if target.name.begins_with("Tree"):
+								current_wood += 1
+							else:
+								current_stone += 1
+							_update_hud()
 					gather_timer = gather_interval
+
+func _update_hud() -> void:
+	var huds = get_tree().get_nodes_in_group("HUD")
+	if huds.size() > 0:
+		if huds[0].has_method("update_resources"):
+			huds[0].update_resources(current_wood, current_stone)
 
 func _scan_surroundings() -> void:
 	if current_state == State.MOVE:
