@@ -7,7 +7,9 @@
 [ext_resource type="PackedScene" path="res://scenes/objects/Stone.tscn" id="5_stone"]
 [ext_resource type="PackedScene" path="res://scenes/actors/Enemy.tscn" id="6_enemy"]
 [ext_resource type="PackedScene" path="res://scenes/objects/Spawner.tscn" id="7_spawner"]
-[ext_resource type="Script" path="res://scripts/components/field.gd" id="8_field"]
+[ext_resource type="PackedScene" path="res://scenes/actors/FastEnemy.tscn" id="8_fenemy"]
+[ext_resource type="PackedScene" path="res://scenes/actors/RangedEnemy.tscn" id="9_renemy"]
+[ext_resource type="Script" path="res://scripts/components/field.gd" id="10_field"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(20, 1, 20)
@@ -16,7 +18,7 @@ size = Vector3(20, 1, 20)
 albedo_color = Color(0.2, 0.5, 0.2, 1)
 
 [node name="Field" type="Node3D"]
-script = ExtResource("8_field")
+script = ExtResource("10_field")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 10, 0)
@@ -48,6 +50,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 4)
 spawn_scene = ExtResource("6_enemy")
 respawn_time = 3.0
+
+[node name="EnemySpawner2" parent="Enemies" instance=ExtResource("7_spawner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 3)
+spawn_scene = ExtResource("8_fenemy")
+respawn_time = 4.0
+
+[node name="EnemySpawner3" parent="Enemies" instance=ExtResource("7_spawner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+spawn_scene = ExtResource("9_renemy")
+respawn_time = 5.0
 
 [node name="Resources" type="Node3D" parent="."]
 
