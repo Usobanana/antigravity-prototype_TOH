@@ -20,8 +20,10 @@ func die() -> void:
 		GameStateManager.resources_changed.emit(
 			GameStateManager.wood,
 			GameStateManager.stone,
+			GameStateManager.iron,
 			GameStateManager.bag_wood,
 			GameStateManager.bag_stone,
+			GameStateManager.bag_iron,
 			GameStateManager.max_bag_capacity
 		)
 		
