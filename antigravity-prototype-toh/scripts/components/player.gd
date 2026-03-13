@@ -23,9 +23,14 @@ var gather_timer: float = 0.0
 var knockback_timer: float = 0.0
 var knockback_velocity: Vector3 = Vector3.ZERO
 
+var skill_energy: float = 0.0
+var max_skill_energy: float = 100.0
+
 const TargetMarkerScene = preload("res://scenes/ui/TargetMarker.tscn")
 const GatherProgressScene = preload("res://scenes/ui/GatherProgress.tscn")
 const GatherEffectScene = preload("res://scenes/objects/GatherEffect.tscn")
+const FloatingTextScene = preload("res://scenes/ui/FloatingText.tscn")
+
 var active_marker: Node3D = null
 var active_progress: Node3D = null
 
@@ -116,6 +121,10 @@ func _update_state(delta: float = 0.0) -> void:
 						if GameStateManager:
 							total_damage += GameStateManager.player_damage_bonus
 						target.take_damage(total_damage, hit_dir)
+						
+						# 攻撃ヒット時にスキルゲージを溜める
+						skill_energy = min(skill_energy + 10.0, max_skill_energy)
+						
 					attack_timer = attack_interval
 		State.GATHER:
 			if _get_closest_enemy() != null:
@@ -216,3 +225,32 @@ func _get_closest_gatherable() -> Node3D:
 				min_dist = dist
 				closest = item
 	return closest
+
+func use_skill() -> void:
+	if skill_energy < max_skill_energy:
+		return
+		
+	# ゲージを全消費
+	skill_energy = 0.0
+	
+	# 周囲のすべての敵に大ダメージを与える
+	if enemy_detector:
+		var enemies = enemy_detector.get_overlapping_bodies()
+		for enemy in enemies:
+			if enemy.is_in_group("Enemy") and enemy.has_method("take_damage"):
+				var hit_dir = enemy.global_position - global_position
+				hit_dir.y = 0
+				var skill_damage = attack_damage * 5 # 必殺技は通常攻撃の5倍ダメージ
+				if GameStateManager:
+					skill_damage += GameStateManager.player_damage_bonus * 5
+				enemy.take_damage(skill_damage, hit_dir)
+				
+				# ヒット時に敵の上に専用テキストを浮かせる（任意）
+				if FloatingTextScene:
+					var txt_origin = FloatingTextScene.instantiate()
+					get_tree().current_scene.add_child(txt_origin)
+					txt_origin.global_position = enemy.global_position
+					txt_origin.global_position.y += 2.0
+					if txt_origin.has_method("set_message"):
+						txt_origin.set_message("SMASH!!")
+

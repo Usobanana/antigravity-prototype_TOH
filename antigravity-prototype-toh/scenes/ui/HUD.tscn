@@ -63,6 +63,42 @@ layout_mode = 2
 size_flags_vertical = 4
 text = "Return"
 
+[node name="SkillArea" type="Control" parent="UIContainer"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -160.0
+offset_top = -380.0
+offset_right = -40.0
+offset_bottom = -260.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="SkillProgress" type="ProgressBar" parent="UIContainer/SkillArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+value = 0.0
+fill_mode = 3
+show_percentage = false
+
+[node name="SkillButton" type="Button" parent="UIContainer/SkillArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 28
+text = "SKILL"
+
 [node name="UpgradeButton" type="Button" parent="UIContainer"]
 visible = false
 custom_minimum_size = Vector2(150, 60)
