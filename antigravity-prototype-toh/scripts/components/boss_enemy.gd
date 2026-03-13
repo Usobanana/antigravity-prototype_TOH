@@ -34,8 +34,8 @@ func die() -> void:
 			txt_origin.global_position = global_position
 			txt_origin.global_position.y += 2.0
 			# "Boss Defeated!"などのテキストを表示できるメソッドがあれば呼び出す（今回はset_valueが数値用なので流用か改造が必要）
-			if txt_origin.has_method("set_text"):
-				txt_origin.set_text("Boss Defeated!")
+			if txt_origin.has_method("set_message"):
+				txt_origin.set_message("Boss Defeated!")
 			elif txt_origin.has_method("set_value"):
 				# 仮
 				txt_origin.set_value(9999)

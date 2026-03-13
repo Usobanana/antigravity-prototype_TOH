@@ -27,5 +27,5 @@ func _process(delta: float) -> void:
 func set_value(amount: int) -> void:
 	text = str(amount)
 
-func set_text(msg: String) -> void:
+func set_message(msg: String) -> void:
 	text = msg
