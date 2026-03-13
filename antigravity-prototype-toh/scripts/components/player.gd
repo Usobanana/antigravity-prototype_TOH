@@ -5,7 +5,8 @@ enum State {
 	IDLE,
 	MOVE,
 	ATTACK,
-	GATHER
+	GATHER,
+	KNOCKBACK
 }
 
 @export var move_speed: float = 5.0
@@ -21,6 +22,9 @@ var gather_timer: float = 0.0
 
 var current_wood: int = 0
 var current_stone: int = 0
+
+var knockback_timer: float = 0.0
+var knockback_velocity: Vector3 = Vector3.ZERO
 
 const TargetMarkerScene = preload("res://scenes/ui/TargetMarker.tscn")
 const GatherProgressScene = preload("res://scenes/ui/GatherProgress.tscn")
@@ -40,6 +44,14 @@ func set_input_vector(v: Vector2) -> void:
 	input_vector = v
 
 func _handle_movement(delta: float) -> void:
+	if current_state == State.KNOCKBACK:
+		knockback_timer -= delta
+		velocity = knockback_velocity
+		move_and_slide()
+		if knockback_timer <= 0.0:
+			_change_state(State.IDLE)
+		return
+
 	if input_vector.length() > 0:
 		# 2Dの入力を3D空間(X, Z)へ変換（Yは高さ）
 		var direction = Vector3(input_vector.x, 0, input_vector.y).normalized()
@@ -98,7 +110,9 @@ func _update_state(delta: float = 0.0) -> void:
 				attack_timer -= delta
 				if attack_timer <= 0.0:
 					if target.has_method("take_damage"):
-						target.take_damage(attack_damage)
+						var hit_dir = target.global_position - global_position
+						hit_dir.y = 0
+						target.take_damage(attack_damage, hit_dir)
 					attack_timer = attack_interval
 		State.GATHER:
 			if _get_closest_enemy() != null:
