@@ -85,8 +85,10 @@ func _change_state(new_state: State) -> void:
 func _clear_ui_markers() -> void:
 	if is_instance_valid(active_marker):
 		active_marker.queue_free()
+		active_marker = null
 	if is_instance_valid(active_progress):
 		active_progress.queue_free()
+		active_progress = null
 
 func _update_state(delta: float = 0.0) -> void:
 	match current_state:
@@ -126,6 +128,9 @@ func _update_state(delta: float = 0.0) -> void:
 				if not is_instance_valid(active_progress):
 					active_progress = GatherProgressScene.instantiate()
 					target.add_child(active_progress)
+					# 追加：対象が変わったら古いマーカーを消すため、ここで初期化
+					var pbar = active_progress.get_node("SubViewport/ProgressBar")
+					if pbar: pbar.value = 0
 					
 				gather_timer -= delta
 				
