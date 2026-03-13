@@ -145,7 +145,10 @@ func _update_state(delta: float = 0.0) -> void:
 					var can_gather = false
 					if target.name.begins_with("Tree"):
 						can_gather = GameStateManager.add_to_bag("wood", 1)
+					elif target.name.begins_with("IronOre") or target.is_in_group("IronOre"):
+						can_gather = GameStateManager.add_to_bag("iron", 1)
 					else:
+						# Stone または その他
 						can_gather = GameStateManager.add_to_bag("stone", 1)
 						
 					if can_gather:
@@ -159,7 +162,10 @@ func _update_state(delta: float = 0.0) -> void:
 							
 							var tex = preload("res://icon.svg")
 							if target.name.begins_with("Stone"):
-								tex = preload("res://icon.svg") # 実際の石のテクスチャがあればここを差し替え
+								tex = preload("res://icon.svg")
+								effect.setup(target.global_position, global_position, tex)
+							elif target.name.begins_with("IronOre") or target.is_in_group("IronOre"):
+								tex = preload("res://icon.svg")
 								effect.setup(target.global_position, global_position, tex)
 							else:
 								effect.setup(target.global_position, global_position, tex)
@@ -180,7 +186,7 @@ func _scan_surroundings() -> void:
 		return
 		
 	# 2. バッグがいっぱいでないか、素材の存在チェック（採取は安全圏で）
-	if GameStateManager.bag_wood + GameStateManager.bag_stone < GameStateManager.max_bag_capacity:
+	if GameStateManager.bag_wood + GameStateManager.bag_stone + GameStateManager.bag_iron < GameStateManager.max_bag_capacity:
 		if _get_closest_gatherable() != null:
 			_change_state(State.GATHER)
 			return

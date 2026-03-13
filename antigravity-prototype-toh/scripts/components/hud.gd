@@ -26,7 +26,7 @@ func _ready() -> void:
 	# GameStateManagerからのリソース更新シグナルに接続
 	if GameStateManager:
 		GameStateManager.resources_changed.connect(_on_resources_changed)
-		_on_resources_changed(GameStateManager.wood, GameStateManager.stone, GameStateManager.bag_wood, GameStateManager.bag_stone, GameStateManager.max_bag_capacity)
+		_on_resources_changed(GameStateManager.wood, GameStateManager.stone, GameStateManager.iron, GameStateManager.bag_wood, GameStateManager.bag_stone, GameStateManager.bag_iron, GameStateManager.max_bag_capacity)
 		
 		# パーティ数の更新表示
 		update_party_count(GameStateManager.max_party_size)
@@ -34,12 +34,12 @@ func _ready() -> void:
 func update_party_count(max_val: int) -> void:
 	party_label.text = "Party Size: %d" % max_val
 
-func _on_resources_changed(wood: int, stone: int, bag_wood: int, bag_stone: int, max_bag: int) -> void:
+func _on_resources_changed(wood: int, stone: int, iron: int, bag_wood: int, bag_stone: int, bag_iron: int, max_bag: int) -> void:
 	if get_tree().current_scene and get_tree().current_scene.name == "Field":
-		var total_bag = bag_wood + bag_stone
-		resource_label.text = "Bag: %d/%d (W:%d S:%d)" % [total_bag, max_bag, bag_wood, bag_stone]
+		var total_bag = bag_wood + bag_stone + bag_iron
+		resource_label.text = "Bag: %d/%d (W:%d S:%d I:%d)" % [total_bag, max_bag, bag_wood, bag_stone, bag_iron]
 	else:
-		resource_label.text = "Storage: Wood %d / Stone %d" % [wood, stone]
+		resource_label.text = "Storage: Wood %d / Stone %d / Iron %d" % [wood, stone, iron]
 		
 	# 更新時にラベルをバウンス（跳ねる）させるTweenアニメーション
 	if is_inside_tree():

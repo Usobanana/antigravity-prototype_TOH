@@ -43,11 +43,12 @@ facility_name = "Tent"
 base_cost_wood = 10
 base_cost_stone = 5
 
-[node name="Camp" parent="Facilities" instance=ExtResource("4_fac")]
+[node name="Blacksmith" parent="Facilities" instance=ExtResource("4_fac")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, -3)
-facility_name = "Camp"
+facility_name = "Blacksmith"
 base_cost_wood = 15
 base_cost_stone = 10
+base_cost_iron = 5
 
 [node name="Storage" parent="Facilities" instance=ExtResource("4_fac")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)

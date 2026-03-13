@@ -4,6 +4,7 @@ class_name Facility
 @export var facility_name: String = "Tent"
 @export var base_cost_wood: int = 10
 @export var base_cost_stone: int = 5
+@export var base_cost_iron: int = 0
 
 var current_level: int = 1
 
@@ -18,13 +19,21 @@ func _ready() -> void:
 func _update_label() -> void:
 	var req_wood = get_current_wood_cost()
 	var req_stone = get_current_stone_cost()
-	label_3d.text = "%s Lv.%d\nCost: Wood %d / Stone %d" % [facility_name, current_level, req_wood, req_stone]
+	var req_iron = get_current_iron_cost()
+	
+	if req_iron > 0:
+		label_3d.text = "%s Lv.%d\nCost: Wood %d / Stone %d / Iron %d" % [facility_name, current_level, req_wood, req_stone, req_iron]
+	else:
+		label_3d.text = "%s Lv.%d\nCost: Wood %d / Stone %d" % [facility_name, current_level, req_wood, req_stone]
 
 func get_current_wood_cost() -> int:
 	return base_cost_wood * current_level
 
 func get_current_stone_cost() -> int:
 	return base_cost_stone * current_level
+
+func get_current_iron_cost() -> int:
+	return base_cost_iron * current_level
 
 func _on_body_entered(body: Node3D) -> void:
 	if body.is_in_group("Player"):
@@ -51,8 +60,9 @@ func _hide_upgrade_ui() -> void:
 func try_upgrade() -> bool:
 	var req_wood = get_current_wood_cost()
 	var req_stone = get_current_stone_cost()
+	var req_iron = get_current_iron_cost()
 	
-	if GameStateManager.spend_resources(req_wood, req_stone):
+	if GameStateManager.spend_resources(req_wood, req_stone, req_iron):
 		current_level += 1
 		_apply_upgrade_effect()
 		_update_label()
@@ -62,7 +72,7 @@ func try_upgrade() -> bool:
 func _apply_upgrade_effect() -> void:
 	if facility_name == "Tent":
 		GameStateManager.upgrade_party_size()
-	elif facility_name == "Camp":
+	elif facility_name == "Blacksmith":
 		GameStateManager.upgrade_damage()
 	elif facility_name == "Storage":
 		GameStateManager.upgrade_bag_capacity()

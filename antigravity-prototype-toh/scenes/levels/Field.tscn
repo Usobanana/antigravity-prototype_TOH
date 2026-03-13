@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/actors/RangedEnemy.tscn" id="9_renemy"]
 [ext_resource type="PackedScene" path="res://scenes/actors/BossEnemy.tscn" id="10_boss"]
 [ext_resource type="Script" path="res://scripts/components/field.gd" id="11_field"]
+[ext_resource type="PackedScene" path="res://scenes/objects/IronOre.tscn" id="12_iron"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(40, 1, 40)
@@ -154,3 +155,13 @@ respawn_time = 8.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -5)
 spawn_scene = ExtResource("5_stone")
 respawn_time = 8.0
+
+[node name="IronOreSpawner1" parent="Resources" instance=ExtResource("7_spawner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 15)
+spawn_scene = ExtResource("12_iron")
+respawn_time = 12.0
+
+[node name="IronOreSpawner2" parent="Resources" instance=ExtResource("7_spawner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 12)
+spawn_scene = ExtResource("12_iron")
+respawn_time = 12.0
