@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/actors/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/actors/CameraController.tscn" id="2_cam"]
 [ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="3_hud"]
 [ext_resource type="PackedScene" path="res://scenes/objects/Tree.tscn" id="4_tree"]
-[ext_resource type="PackedScene" path="res://scenes/actors/Enemy.tscn" id="5_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/objects/Stone.tscn" id="5_stone"]
+[ext_resource type="PackedScene" path="res://scenes/actors/Enemy.tscn" id="6_enemy"]
 [ext_resource type="PackedScene" path="res://scenes/objects/Spawner.tscn" id="7_spawner"]
 [ext_resource type="Script" path="res://scripts/components/field.gd" id="8_field"]
 
@@ -45,7 +46,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="EnemySpawner1" parent="Enemies" instance=ExtResource("7_spawner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 4)
-spawn_scene = ExtResource("5_enemy")
+spawn_scene = ExtResource("6_enemy")
 respawn_time = 3.0
 
 [node name="Resources" type="Node3D" parent="."]
@@ -59,3 +60,13 @@ respawn_time = 5.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -2)
 spawn_scene = ExtResource("4_tree")
 respawn_time = 5.0
+
+[node name="StoneSpawner1" parent="Resources" instance=ExtResource("7_spawner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 3)
+spawn_scene = ExtResource("5_stone")
+respawn_time = 8.0
+
+[node name="StoneSpawner2" parent="Resources" instance=ExtResource("7_spawner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -4)
+spawn_scene = ExtResource("5_stone")
+respawn_time = 8.0
