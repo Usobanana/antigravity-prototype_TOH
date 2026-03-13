@@ -9,7 +9,8 @@
 [ext_resource type="PackedScene" path="res://scenes/objects/Spawner.tscn" id="7_spawner"]
 [ext_resource type="PackedScene" path="res://scenes/actors/FastEnemy.tscn" id="8_fenemy"]
 [ext_resource type="PackedScene" path="res://scenes/actors/RangedEnemy.tscn" id="9_renemy"]
-[ext_resource type="Script" path="res://scripts/components/field.gd" id="10_field"]
+[ext_resource type="PackedScene" path="res://scenes/actors/BossEnemy.tscn" id="10_boss"]
+[ext_resource type="Script" path="res://scripts/components/field.gd" id="11_field"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(40, 1, 40)
@@ -24,7 +25,7 @@ size = Vector3(40, 2, 1)
 size = Vector3(20, 2, 1)
 
 [node name="Field" type="Node3D"]
-script = ExtResource("10_field")
+script = ExtResource("11_field")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 10, 0)
@@ -126,6 +127,11 @@ respawn_time = 4.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -15)
 spawn_scene = ExtResource("9_renemy")
 respawn_time = 5.0
+
+[node name="EnemySpawner4" parent="Enemies" instance=ExtResource("7_spawner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, -15)
+spawn_scene = ExtResource("10_boss")
+respawn_time = 30.0
 
 [node name="Resources" type="Node3D" parent="."]
 
