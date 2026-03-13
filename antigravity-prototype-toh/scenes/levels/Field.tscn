@@ -5,8 +5,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="3_hud"]
 [ext_resource type="PackedScene" path="res://scenes/objects/Tree.tscn" id="4_tree"]
 [ext_resource type="PackedScene" path="res://scenes/actors/Enemy.tscn" id="5_enemy"]
-[ext_resource type="PackedScene" path="res://scenes/actors/Follower.tscn" id="6_follower"]
 [ext_resource type="PackedScene" path="res://scenes/objects/Spawner.tscn" id="7_spawner"]
+[ext_resource type="Script" path="res://scripts/components/field.gd" id="8_field"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(20, 1, 20)
@@ -15,6 +15,7 @@ size = Vector3(20, 1, 20)
 albedo_color = Color(0.2, 0.5, 0.2, 1)
 
 [node name="Field" type="Node3D"]
+script = ExtResource("8_field")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 10, 0)
@@ -39,9 +40,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 [node name="HUD" parent="." instance=ExtResource("3_hud")]
 
 [node name="Allies" type="Node3D" parent="."]
-
-[node name="Follower1" parent="Allies" instance=ExtResource("6_follower")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 2)
 
 [node name="Enemies" type="Node3D" parent="."]
 

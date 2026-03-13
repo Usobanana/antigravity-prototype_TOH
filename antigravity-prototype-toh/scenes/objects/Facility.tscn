@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/components/facility.gd" id="1_fac"]
+[ext_resource type="Texture2D" uid="uid://cx61xx" path="res://icon.svg" id="2_tex"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_fac"]
+radius = 1.5
+height = 1.0
+
+[node name="Facility" type="Area3D"]
+script = ExtResource("1_fac")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CylinderShape3D_fac")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+modulate = Color(0.2, 0.2, 0.8, 1)
+pixel_size = 0.03
+billboard = 1
+texture = ExtResource("2_tex")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+billboard = 1
+text = "Facility Lv.1
+Cost: Wood 10 / Stone 5"
+font_size = 48
+outline_size = 12

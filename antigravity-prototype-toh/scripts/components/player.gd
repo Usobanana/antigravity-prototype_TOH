@@ -20,9 +20,6 @@ var input_vector: Vector2 = Vector2.ZERO
 var attack_timer: float = 0.0
 var gather_timer: float = 0.0
 
-var current_wood: int = 0
-var current_stone: int = 0
-
 var knockback_timer: float = 0.0
 var knockback_velocity: Vector3 = Vector3.ZERO
 
@@ -112,7 +109,10 @@ func _update_state(delta: float = 0.0) -> void:
 					if target.has_method("take_damage"):
 						var hit_dir = target.global_position - global_position
 						hit_dir.y = 0
-						target.take_damage(attack_damage, hit_dir)
+						var total_damage = attack_damage
+						if GameStateManager:
+							total_damage += GameStateManager.player_damage_bonus
+						target.take_damage(total_damage, hit_dir)
 					attack_timer = attack_interval
 		State.GATHER:
 			if _get_closest_enemy() != null:
@@ -140,17 +140,10 @@ func _update_state(delta: float = 0.0) -> void:
 						var success = target.gather()
 						if success:
 							if target.name.begins_with("Tree"):
-								current_wood += 1
+								GameStateManager.add_wood(1)
 							else:
-								current_stone += 1
-							_update_hud()
+								GameStateManager.add_stone(1)
 					gather_timer = gather_interval
-
-func _update_hud() -> void:
-	var huds = get_tree().get_nodes_in_group("HUD")
-	if huds.size() > 0:
-		if huds[0].has_method("update_resources"):
-			huds[0].update_resources(current_wood, current_stone)
 
 func _scan_surroundings() -> void:
 	if current_state == State.MOVE:

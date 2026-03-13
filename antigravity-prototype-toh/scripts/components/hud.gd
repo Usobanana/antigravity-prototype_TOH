@@ -5,23 +5,36 @@ class_name HUD
 @onready var party_label = $UIContainer/BottomArea/HBoxContainer/PartyLabel
 @onready var resource_label = $UIContainer/BottomArea/HBoxContainer/ResourceLabel
 @onready var return_button = $UIContainer/BottomArea/HBoxContainer/ReturnButton
+@onready var upgrade_button = $UIContainer/UpgradeButton
+
+var current_facility: Node3D = null
 
 func _ready() -> void:
 	if virtual_pad:
 		virtual_pad.stick_moved.connect(_on_stick_moved)
 	if return_button:
 		return_button.pressed.connect(_on_return_pressed)
+	if upgrade_button:
+		upgrade_button.pressed.connect(_on_upgrade_pressed)
 		
 	# シーンに応じてボタンの文字を変更
 	if get_tree().current_scene and get_tree().current_scene.name == "Base":
 		return_button.text = "Go Field"
 	else:
 		return_button.text = "Return"
+		
+	# GameStateManagerからのリソース更新シグナルに接続
+	if GameStateManager:
+		GameStateManager.resources_changed.connect(_on_resources_changed)
+		_on_resources_changed(GameStateManager.wood, GameStateManager.stone)
+		
+		# パーティ数の更新表示
+		update_party_count(GameStateManager.max_party_size)
 
-func update_party_count(current: int, max_val: int) -> void:
-	party_label.text = "Party: %d/%d" % [current, max_val]
+func update_party_count(max_val: int) -> void:
+	party_label.text = "Party Size: %d" % max_val
 
-func update_resources(wood: int, stone: int) -> void:
+func _on_resources_changed(wood: int, stone: int) -> void:
 	resource_label.text = "Wood: %d  Stone: %d" % [wood, stone]
 
 func _on_return_pressed() -> void:
@@ -30,6 +43,20 @@ func _on_return_pressed() -> void:
 		get_tree().change_scene_to_file("res://scenes/levels/Base.tscn")
 	else:
 		get_tree().change_scene_to_file("res://scenes/levels/Field.tscn")
+
+func _on_upgrade_pressed() -> void:
+	if current_facility and current_facility.has_method("try_upgrade"):
+		current_facility.try_upgrade()
+
+func show_upgrade_button(facility: Node3D) -> void:
+	current_facility = facility
+	if upgrade_button:
+		upgrade_button.visible = true
+
+func hide_upgrade_button() -> void:
+	current_facility = null
+	if upgrade_button:
+		upgrade_button.visible = false
 
 func _on_stick_moved(direction: Vector2) -> void:
 	var players = get_tree().get_nodes_in_group("Player")
