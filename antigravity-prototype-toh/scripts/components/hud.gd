@@ -40,6 +40,15 @@ func _on_resources_changed(wood: int, stone: int, bag_wood: int, bag_stone: int,
 		resource_label.text = "Bag: %d/%d (W:%d S:%d)" % [total_bag, max_bag, bag_wood, bag_stone]
 	else:
 		resource_label.text = "Storage: Wood %d / Stone %d" % [wood, stone]
+		
+	# 更新時にラベルをバウンス（跳ねる）させるTweenアニメーション
+	if is_inside_tree():
+		var tween = create_tween()
+		# Pivotを中心に確実に拡縮させるため
+		resource_label.pivot_offset = resource_label.size / 2
+		tween.tween_property(resource_label, "scale", Vector2(1.2, 1.2), 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		tween.tween_property(resource_label, "scale", Vector2(1.0, 1.0), 0.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
 
 func _on_return_pressed() -> void:
 	var current_scene = get_tree().current_scene.name

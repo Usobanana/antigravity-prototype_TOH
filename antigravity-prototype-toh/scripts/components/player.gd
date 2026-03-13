@@ -25,6 +25,7 @@ var knockback_velocity: Vector3 = Vector3.ZERO
 
 const TargetMarkerScene = preload("res://scenes/ui/TargetMarker.tscn")
 const GatherProgressScene = preload("res://scenes/ui/GatherProgress.tscn")
+const GatherEffectScene = preload("res://scenes/objects/GatherEffect.tscn")
 var active_marker: Node3D = null
 var active_progress: Node3D = null
 
@@ -150,6 +151,18 @@ func _update_state(delta: float = 0.0) -> void:
 					if can_gather:
 						if target.has_method("gather"):
 							target.gather()
+							
+						# 獲得したアイテムが自身に飛んでくるエフェクトの生成
+						if GatherEffectScene:
+							var effect = GatherEffectScene.instantiate()
+							get_tree().current_scene.add_child(effect)
+							
+							var tex = preload("res://icon.svg")
+							if target.name.begins_with("Stone"):
+								tex = preload("res://icon.svg") # 実際の石のテクスチャがあればここを差し替え
+								effect.setup(target.global_position, global_position, tex)
+							else:
+								effect.setup(target.global_position, global_position, tex)
 					else:
 						# バッグが満タンの場合は採取を中断してIDLEへ
 						_change_state(State.IDLE)
