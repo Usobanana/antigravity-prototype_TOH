@@ -2,7 +2,7 @@ extends Camera3D
 class_name CameraController
 
 @export var follow_speed: float = 5.0
-@export var offset: Vector3 = Vector3(0, 8, 8) # カメラの基本位置（対象からY方向+8, Z方向+8の斜め上）
+@export var offset: Vector3 = Vector3(0, 16, 16) # カメラの基本位置をさらに遠く（高く+手前へ）離す
 
 var target: Node3D = null
 
