@@ -26,7 +26,7 @@ func _ready() -> void:
 	# GameStateManagerからのリソース更新シグナルに接続
 	if GameStateManager:
 		GameStateManager.resources_changed.connect(_on_resources_changed)
-		_on_resources_changed(GameStateManager.wood, GameStateManager.stone)
+		_on_resources_changed(GameStateManager.wood, GameStateManager.stone, GameStateManager.bag_wood, GameStateManager.bag_stone, GameStateManager.max_bag_capacity)
 		
 		# パーティ数の更新表示
 		update_party_count(GameStateManager.max_party_size)
@@ -34,12 +34,18 @@ func _ready() -> void:
 func update_party_count(max_val: int) -> void:
 	party_label.text = "Party Size: %d" % max_val
 
-func _on_resources_changed(wood: int, stone: int) -> void:
-	resource_label.text = "Wood: %d  Stone: %d" % [wood, stone]
+func _on_resources_changed(wood: int, stone: int, bag_wood: int, bag_stone: int, max_bag: int) -> void:
+	if get_tree().current_scene and get_tree().current_scene.name == "Field":
+		var total_bag = bag_wood + bag_stone
+		resource_label.text = "Bag: %d/%d (W:%d S:%d)" % [total_bag, max_bag, bag_wood, bag_stone]
+	else:
+		resource_label.text = "Storage: Wood %d / Stone %d" % [wood, stone]
 
 func _on_return_pressed() -> void:
 	var current_scene = get_tree().current_scene.name
 	if current_scene == "Field":
+		if GameStateManager:
+			GameStateManager.deposit_all()
 		get_tree().change_scene_to_file("res://scenes/levels/Base.tscn")
 	else:
 		get_tree().change_scene_to_file("res://scenes/levels/Field.tscn")

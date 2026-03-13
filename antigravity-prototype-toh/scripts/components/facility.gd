@@ -64,4 +64,5 @@ func _apply_upgrade_effect() -> void:
 		GameStateManager.upgrade_party_size()
 	elif facility_name == "Camp":
 		GameStateManager.upgrade_damage()
-	# 他の施設なら他のアップグレードを呼ぶ
+	elif facility_name == "Storage":
+		GameStateManager.upgrade_bag_capacity()

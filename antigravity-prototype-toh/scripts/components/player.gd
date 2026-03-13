@@ -141,13 +141,20 @@ func _update_state(delta: float = 0.0) -> void:
 					pbar.value = 1.0 - (gather_timer / gather_interval)
 				
 				if gather_timer <= 0.0:
-					if target.has_method("gather"):
-						var success = target.gather()
-						if success:
-							if target.name.begins_with("Tree"):
-								GameStateManager.add_wood(1)
-							else:
-								GameStateManager.add_stone(1)
+					var can_gather = false
+					if target.name.begins_with("Tree"):
+						can_gather = GameStateManager.add_to_bag("wood", 1)
+					else:
+						can_gather = GameStateManager.add_to_bag("stone", 1)
+						
+					if can_gather:
+						if target.has_method("gather"):
+							target.gather()
+					else:
+						# バッグが満タンの場合は採取を中断してIDLEへ
+						_change_state(State.IDLE)
+						return
+
 					gather_timer = gather_interval
 
 func _scan_surroundings() -> void:
@@ -159,10 +166,11 @@ func _scan_surroundings() -> void:
 		_change_state(State.ATTACK)
 		return
 		
-	# 2. 素材の存在チェック（採取は安全圏で）
-	if _get_closest_gatherable() != null:
-		_change_state(State.GATHER)
-		return
+	# 2. バッグがいっぱいでないか、素材の存在チェック（採取は安全圏で）
+	if GameStateManager.bag_wood + GameStateManager.bag_stone < GameStateManager.max_bag_capacity:
+		if _get_closest_gatherable() != null:
+			_change_state(State.GATHER)
+			return
 
 func _get_closest_enemy() -> Node3D:
 	if not enemy_detector: return null
