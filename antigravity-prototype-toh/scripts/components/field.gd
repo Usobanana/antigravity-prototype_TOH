@@ -51,4 +51,3 @@ func _on_time_updated(current_time: float, is_night: bool) -> void:
 		else: # Morning/Day
 			sun.light_color = Color(1.0, 1.0, 0.9)
 			sun.light_energy = 1.0
-

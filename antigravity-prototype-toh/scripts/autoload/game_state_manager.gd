@@ -14,6 +14,16 @@ var player_damage_bonus: int = 0
 
 signal resources_changed(wood: int, stone: int, iron: int, bag_wood: int, bag_stone: int, bag_iron: int, max_bag: int)
 
+func add_resource(type: String, amount: int) -> void:
+	if type == "wood":
+		wood += amount
+	elif type == "stone":
+		stone += amount
+	elif type == "iron":
+		iron += amount
+	resources_changed.emit(wood, stone, iron, bag_wood, bag_stone, bag_iron, max_bag_capacity)
+
+
 func add_to_bag(type: String, amount: int) -> bool:
 	if bag_wood + bag_stone + bag_iron + amount > max_bag_capacity:
 		return false

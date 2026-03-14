@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/actors/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/actors/CameraController.tscn" id="2_cam"]
@@ -10,6 +10,18 @@ size = Vector3(15, 1, 15)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
 albedo_color = Color(0.6, 0.5, 0.3, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_grid"]
+size = Vector2(15, 15)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_grid"]
+size = Vector2(32, 32)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grid"]
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.2)
+albedo_texture = SubResource("PlaceholderTexture2D_grid")
+uv1_scale = Vector3(15, 15, 1)
 
 [node name="Base" type="Node3D"]
 
@@ -28,7 +40,14 @@ shape = SubResource("BoxShape3D_floor")
 size = Vector3(15, 1, 15)
 material = SubResource("StandardMaterial3D_floor")
 
+[node name="Grid" type="MeshInstance3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
+visible = false
+mesh = SubResource("PlaneMesh_grid")
+material_override = SubResource("StandardMaterial3D_grid")
+
 [node name="Player" parent="." instance=ExtResource("1_player")]
+
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="CameraController" parent="." instance=ExtResource("2_cam")]

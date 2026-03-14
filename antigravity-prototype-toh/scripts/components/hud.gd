@@ -12,6 +12,9 @@ class_name HUD
 @onready var skill_progress = $UIContainer/SkillArea/SkillProgress
 @onready var skill_button = $UIContainer/SkillArea/SkillButton
 
+@onready var debug_menu = $DebugMenu
+@onready var debug_button = $UIContainer/DebugButton
+
 var current_facility: Node3D = null
 
 func _ready() -> void:
@@ -23,6 +26,11 @@ func _ready() -> void:
 		upgrade_button.pressed.connect(_on_upgrade_pressed)
 	if skill_button:
 		skill_button.pressed.connect(_on_skill_pressed)
+	if debug_button:
+		debug_button.pressed.connect(_on_debug_pressed)
+		# デバッグビルド時以外は隠す（あるいはフラグ管理）
+		if not OS.is_debug_build():
+			debug_button.hide()
 		
 	# シーンに応じてボタンの文字を変更
 	if get_tree().current_scene and get_tree().current_scene.name == "Base":
@@ -116,3 +124,8 @@ func _on_skill_pressed() -> void:
 	if players.size() > 0:
 		if players[0].has_method("use_skill"):
 			players[0].use_skill()
+
+func _on_debug_pressed() -> void:
+	if debug_menu:
+		debug_menu.toggle()
+

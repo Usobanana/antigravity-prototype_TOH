@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/actors/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/actors/CameraController.tscn" id="2_cam"]
@@ -25,6 +25,18 @@ size = Vector3(40, 2, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_inner_wall"]
 size = Vector3(20, 2, 1)
 
+[sub_resource type="PlaneMesh" id="PlaneMesh_field_grid"]
+size = Vector2(40, 40)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_field_grid"]
+size = Vector2(32, 32)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_field_grid"]
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.2)
+albedo_texture = SubResource("PlaceholderTexture2D_field_grid")
+uv1_scale = Vector3(40, 40, 1)
+
 [node name="Field" type="Node3D"]
 script = ExtResource("11_field")
 
@@ -43,7 +55,14 @@ shape = SubResource("BoxShape3D_floor")
 size = Vector3(40, 1, 40)
 material = SubResource("StandardMaterial3D_floor")
 
+[node name="Grid" type="MeshInstance3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
+visible = false
+mesh = SubResource("PlaneMesh_field_grid")
+material_override = SubResource("StandardMaterial3D_field_grid")
+
 [node name="WallNorth" type="StaticBody3D" parent="NavigationRegion3D"]
+
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -20)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WallNorth"]

@@ -2,11 +2,15 @@
 
 [ext_resource type="Script" path="res://scripts/components/hud.gd" id="1_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/VirtualPad.tscn" id="2_vpad"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DebugMenu.tscn" id="3_debug"]
 
 [node name="HUD" type="CanvasLayer" groups=["HUD"]]
 script = ExtResource("1_hud")
 
 [node name="VirtualPad" parent="." instance=ExtResource("2_vpad")]
+
+[node name="DebugMenu" parent="." instance=ExtResource("3_debug")]
+visible = false
 
 [node name="UIContainer" type="Control" parent="."]
 layout_mode = 3
@@ -121,3 +125,10 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 24
 text = "Upgrade"
+
+[node name="DebugButton" type="Button" parent="UIContainer"]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+flat = true

@@ -204,7 +204,9 @@ func _scan_surroundings() -> void:
 
 func _get_closest_enemy() -> Node3D:
 	if not enemy_detector: return null
-	var enemies = enemy_detector.get_overlapping_bodies() # または get_overlapping_areas() 構成による
+	var enemies = enemy_detector.get_overlapping_bodies()
+	if enemies.size() > 0:
+		print("Debug Player: Detecting ", enemies.size(), " bodies in Enemy Range")
 	var closest = null
 	var min_dist = INF
 	for enemy in enemies:
@@ -213,11 +215,15 @@ func _get_closest_enemy() -> Node3D:
 			if dist < min_dist:
 				min_dist = dist
 				closest = enemy
+	if closest:
+		print("Debug Player: Target Enemy found: ", closest.name)
 	return closest
 
 func _get_closest_gatherable() -> Node3D:
 	if not gather_detector: return null
 	var items = gather_detector.get_overlapping_bodies()
+	if items.size() > 0:
+		print("Debug Player: Detecting ", items.size(), " bodies in Gather Range")
 	var closest = null
 	var min_dist = INF
 	for item in items:
@@ -226,6 +232,8 @@ func _get_closest_gatherable() -> Node3D:
 			if dist < min_dist:
 				min_dist = dist
 				closest = item
+	if closest:
+		print("Debug Player: Target Resource found: ", closest.name)
 	return closest
 
 func use_skill() -> void:
@@ -255,4 +263,3 @@ func use_skill() -> void:
 					txt_origin.global_position.y += 2.0
 					if txt_origin.has_method("set_message"):
 						txt_origin.set_message("SMASH!!")
-

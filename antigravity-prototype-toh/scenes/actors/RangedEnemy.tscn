@@ -20,12 +20,12 @@ script = ExtResource("1_renemy")
 projectile_scene = ExtResource("3_proj")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.56, 0)
 shape = SubResource("CylinderShape3D_enemy")
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.56, 0)
 material_override = SubResource("ShaderMaterial_ranged")
-pixel_size = 0.001
+pixel_size = 0.005
 billboard = 1
 texture = ExtResource("2_ene")
