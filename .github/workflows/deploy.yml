@@ -32,13 +32,13 @@ jobs:
 
       - name: Export Web
         run: |
-          mkdir -p build/web
-          godot --headless --export-release "Web" build/web/index.html
+          mkdir -p build
+          godot --headless --export-release "Web" build/index.html
 
       - name: Add SharedArrayBuffer Fix (coi-serviceworker)
         run: |
           # Create coi-serviceworker.js
-          cat << 'EOF' > build/web/coi-serviceworker.js
+          cat << 'EOF' > build/coi-serviceworker.js
           if (typeof window === "undefined") {
               self.addEventListener("install", () => self.skipWaiting());
               self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
@@ -85,12 +85,12 @@ jobs:
           }
           EOF
           # Patch index.html to include the script
-          sed -i 's/<head>/<head><script src="coi-serviceworker.js"><\/script>/' build/web/index.html
+          sed -i 's/<head>/<head><script src="coi-serviceworker.js"><\/script>/' build/index.html
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: antigravity-prototype-toh/build/web
+          path: antigravity-prototype-toh/build
 
   deploy:
     needs: export
