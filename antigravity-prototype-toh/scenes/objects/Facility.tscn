@@ -2,10 +2,16 @@
 
 [ext_resource type="Script" path="res://scripts/components/facility.gd" id="1_fac"]
 [ext_resource type="Texture2D" path="res://assets/placeholders/facility.png" id="2_fac"]
+[ext_resource type="Shader" path="res://shaders/white_to_alpha.gdshader" id="3_shader"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_fac"]
 radius = 1.5
 height = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fac"]
+render_priority = 0
+shader = ExtResource("3_shader")
+shader_parameter/threshold = 0.95
 
 [node name="Facility" type="Area3D"]
 script = ExtResource("1_fac")
@@ -16,7 +22,8 @@ shape = SubResource("CylinderShape3D_fac")
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-pixel_size = 0.03
+material_override = SubResource("ShaderMaterial_fac")
+pixel_size = 0.002
 billboard = 1
 texture = ExtResource("2_fac")
 

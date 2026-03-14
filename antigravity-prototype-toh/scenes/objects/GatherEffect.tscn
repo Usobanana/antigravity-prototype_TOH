@@ -2,11 +2,18 @@
 
 [ext_resource type="Script" path="res://scripts/components/gather_effect.gd" id="1_geff"]
 [ext_resource type="Texture2D" path="res://assets/placeholders/tree.png" id="2_tree"]
+[ext_resource type="Shader" path="res://shaders/white_to_alpha.gdshader" id="3_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gather"]
+render_priority = 0
+shader = ExtResource("3_shader")
+shader_parameter/threshold = 0.95
 
 [node name="GatherEffect" type="Node3D"]
 script = ExtResource("1_geff")
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.5, 0)
+material_override = SubResource("ShaderMaterial_gather")
 billboard = 1
 texture = ExtResource("2_tree")
