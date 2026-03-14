@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode unshaded, blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
 
 uniform sampler2D texture_albedo : source_color, filter_linear_mipmap, repeat_enable;
 uniform float threshold : hint_range(0.0, 1.0) = 0.95;

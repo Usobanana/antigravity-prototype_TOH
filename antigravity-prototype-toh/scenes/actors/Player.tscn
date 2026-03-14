@@ -20,6 +20,7 @@ radius = 2.0
 render_priority = 0
 shader = ExtResource("3_shader")
 shader_parameter/threshold = 0.95
+shader_parameter/texture_albedo = ExtResource("2_player")
 
 [node name="Player" type="CharacterBody3D" groups=["Player"]]
 script = ExtResource("1_player")
@@ -31,7 +32,7 @@ shape = SubResource("CylinderShape3D_player")
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 material_override = SubResource("ShaderMaterial_player")
-pixel_size = 0.002
+pixel_size = 0.001
 billboard = 1
 texture = ExtResource("2_player")
 
