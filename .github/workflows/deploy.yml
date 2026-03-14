@@ -33,7 +33,7 @@ jobs:
       - name: Export Web
         run: |
           mkdir -p build
-          godot --headless --export-release "Web" build/index.html
+          godot --headless --verbose --export-release "Web" build/index.html
 
       - name: Add SharedArrayBuffer Fix (coi-serviceworker)
         run: |
