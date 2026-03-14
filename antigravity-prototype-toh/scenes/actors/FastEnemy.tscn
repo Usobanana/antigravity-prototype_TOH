@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/components/enemy.gd" id="1_enemy"]
-[ext_resource type="Texture2D" uid="uid://cx61xx" path="res://icon.svg" id="2_icon"]
+[ext_resource type="Texture2D" path="res://assets/placeholders/enemy.png" id="2_ene"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_enemy"]
 height = 1.0
@@ -19,6 +19,5 @@ shape = SubResource("CylinderShape3D_enemy")
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-modulate = Color(1, 0.5, 0, 1)
 billboard = 1
-texture = ExtResource("2_icon")
+texture = ExtResource("2_ene")

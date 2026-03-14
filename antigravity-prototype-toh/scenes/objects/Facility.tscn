@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/components/facility.gd" id="1_fac"]
-[ext_resource type="Texture2D" uid="uid://cx61xx" path="res://icon.svg" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/placeholders/facility.png" id="2_fac"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_fac"]
 radius = 1.5
@@ -16,10 +16,9 @@ shape = SubResource("CylinderShape3D_fac")
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-modulate = Color(0.2, 0.2, 0.8, 1)
 pixel_size = 0.03
 billboard = 1
-texture = ExtResource("2_tex")
+texture = ExtResource("2_fac")
 
 [node name="Label3D" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)

@@ -10,11 +10,6 @@ func setup(start: Vector3, target: Vector3, texture: Texture2D) -> void:
 	
 	if has_node("Sprite3D"):
 		$Sprite3D.texture = texture
-		# 石の場合は色をグレーにするなどの処理
-		if texture.resource_path.find("Stone") != -1 or texture.resource_path.find("stone") != -1:
-			$Sprite3D.modulate = Color(0.6, 0.6, 0.6)
-		else:
-			$Sprite3D.modulate = Color(0, 1, 0) # 木のデフォルト
 			
 	_play_animation()
 

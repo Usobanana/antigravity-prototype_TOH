@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="Texture2D" uid="uid://cx61xx" path="res://icon.svg" id="1_icon"]
+[ext_resource type="Texture2D" path="res://assets/placeholders/target_marker.png" id="1_tm"]
 [ext_resource type="Script" path="res://scripts/components/target_marker.gd" id="2_script"]
 
 [node name="TargetMarker" type="Sprite3D"]
@@ -9,5 +9,5 @@ modulate = Color(1, 0, 0, 0.5)
 pixel_size = 0.02
 transparent = false
 shaded = true
-texture = ExtResource("1_icon")
+texture = ExtResource("1_tm")
 script = ExtResource("2_script")

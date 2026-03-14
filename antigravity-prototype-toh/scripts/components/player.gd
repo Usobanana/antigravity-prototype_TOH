@@ -31,6 +31,10 @@ const GatherProgressScene = preload("res://scenes/ui/GatherProgress.tscn")
 const GatherEffectScene = preload("res://scenes/objects/GatherEffect.tscn")
 const FloatingTextScene = preload("res://scenes/ui/FloatingText.tscn")
 
+const WoodTexture = preload("res://assets/placeholders/tree.png")
+const StoneTexture = preload("res://assets/placeholders/stone.png")
+const IronTexture = preload("res://assets/placeholders/iron_ore.png")
+
 var active_marker: Node3D = null
 var active_progress: Node3D = null
 
@@ -169,15 +173,13 @@ func _update_state(delta: float = 0.0) -> void:
 							var effect = GatherEffectScene.instantiate()
 							get_tree().current_scene.add_child(effect)
 							
-							var tex = preload("res://icon.svg")
+							var tex = WoodTexture
 							if target.name.begins_with("Stone"):
-								tex = preload("res://icon.svg")
-								effect.setup(target.global_position, global_position, tex)
+								tex = StoneTexture
 							elif target.name.begins_with("IronOre") or target.is_in_group("IronOre"):
-								tex = preload("res://icon.svg")
-								effect.setup(target.global_position, global_position, tex)
-							else:
-								effect.setup(target.global_position, global_position, tex)
+								tex = IronTexture
+								
+							effect.setup(target.global_position, global_position, tex)
 					else:
 						# バッグが満タンの場合は採取を中断してIDLEへ
 						_change_state(State.IDLE)
