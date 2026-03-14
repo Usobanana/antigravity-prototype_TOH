@@ -1,0 +1,100 @@
+name: "deploy"
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    name: Web Export
+    defaults:
+      run:
+        working-directory: antigravity-prototype-toh
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.3.0
+
+      - name: Export Web
+        run: |
+          mkdir -p build/web
+          godot --headless --export-release "Web" build/web/index.html
+
+      - name: Add SharedArrayBuffer Fix (coi-serviceworker)
+        run: |
+          # Create coi-serviceworker.js
+          cat << 'EOF' > build/web/coi-serviceworker.js
+          if (typeof window === "undefined") {
+              self.addEventListener("install", () => self.skipWaiting());
+              self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
+              self.addEventListener("fetch", (event) => {
+                  if (event.request.cache === "only-if-cached" && event.request.mode !== "same-origin") {
+                      return;
+                  }
+                  event.respondWith(
+                      fetch(event.request).then((response) => {
+                          if (response.status === 0) {
+                              return response;
+                          }
+                          const newHeaders = new Headers(response.headers);
+                          newHeaders.set("Cross-Origin-Embedder-Policy", "require-corp");
+                          newHeaders.set("Cross-Origin-Opener-Policy", "same-origin");
+                          return new Response(response.body, {
+                              status: response.status,
+                              statusText: response.statusText,
+                              headers: newHeaders,
+                          });
+                      })
+                  );
+              });
+          } else {
+              const script = document.currentScript;
+              if (script) {
+                  const swUrl = script.src;
+                  if ("serviceWorker" in navigator) {
+                      navigator.serviceWorker.register(swUrl).then((registration) => {
+                          registration.addEventListener("updatefound", () => {
+                              const newWorker = registration.installing;
+                              newWorker.addEventListener("statechange", () => {
+                                  if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                                      window.location.reload();
+                                  }
+                              });
+                          });
+                          if (registration.active && !navigator.serviceWorker.controller) {
+                              window.location.reload();
+                          }
+                      });
+                  }
+              }
+          }
+          EOF
+          # Patch index.html to include the script
+          sed -i 's/<head>/<head><script src="coi-serviceworker.js"><\/script>/' build/web/index.html
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: antigravity-prototype-toh/build/web
+
+  deploy:
+    needs: export
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
