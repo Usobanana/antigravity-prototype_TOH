@@ -24,16 +24,14 @@ jobs:
       - name: Setup Godot
         uses: chickensoft-games/setup-godot@v2
         with:
-          version: 4.3.0
+          version: 4.3
           include-templates: true
-
-      - name: Import Resources
-        run: godot --headless --editor --quit
 
       - name: Export Web
         run: |
           mkdir -p build
-          godot --headless --verbose --export-release "Web" build/index.html
+          # プロジェクトファイルを明示的に指定してエクスポート
+          godot --headless --path . --verbose --export-release "Web" build/index.html
 
       - name: Add SharedArrayBuffer Fix (coi-serviceworker)
         run: |
