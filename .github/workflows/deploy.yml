@@ -25,6 +25,10 @@ jobs:
         uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.3.0
+          include-templates: true
+
+      - name: Import Resources
+        run: godot --headless --editor --quit
 
       - name: Export Web
         run: |
