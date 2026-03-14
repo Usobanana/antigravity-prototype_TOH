@@ -3,6 +3,7 @@ class_name Spawner
 
 @export var spawn_scene: PackedScene
 @export var respawn_time: float = 5.0 # 消滅後再出現するまでの秒数
+@export var night_respawn_multiplier: float = 2.0 # 夜間に何倍の速さで出現するか（1.0で変化なし）
 
 var current_instance: Node3D = null
 var spawn_timer: float = 0.0
@@ -13,7 +14,13 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if is_waiting_respawn:
-		spawn_timer -= delta
+		var current_speed = 1.0
+		if TimeManager and TimeManager.is_night:
+			# 敵のスポナー（Enemiesノードの下にある場合）だけ夜間の速度を上げる
+			if get_parent() and get_parent().name == "Enemies":
+				current_speed = night_respawn_multiplier
+				
+		spawn_timer -= delta * current_speed
 		if spawn_timer <= 0.0:
 			_spawn()
 			

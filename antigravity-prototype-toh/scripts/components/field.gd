@@ -4,6 +4,7 @@ const FollowerScene = preload("res://scenes/actors/Follower.tscn")
 
 @onready var allies_container = $Allies
 @onready var player = $Player
+@onready var sun = $DirectionalLight3D
 
 func _ready() -> void:
 	if not GameStateManager: return
@@ -25,3 +26,29 @@ func _ready() -> void:
 		var offset = Vector3(cos(angle), 0, sin(angle)) * 2.0
 		if player:
 			follower.global_position = player.global_position + offset
+			
+	if TimeManager:
+		TimeManager.time_updated.connect(_on_time_updated)
+
+func _on_time_updated(current_time: float, is_night: bool) -> void:
+	if not sun: return
+	
+	# Rotate the sun based on time (X axis for elevation)
+	# 0.0 to 1.0 maps to a full day rotation
+	var elevation = current_time * PI * 2.0
+	sun.rotation.x = -elevation # Rotate around X
+	
+	# Adjust light color and energy
+	if is_night:
+		# Night colors (cool/dark)
+		sun.light_color = Color(0.2, 0.2, 0.5)
+		sun.light_energy = 0.5
+	else:
+		# Day colors (warm/bright)
+		if current_time > 0.5: # Evening
+			sun.light_color = Color(1.0, 0.6, 0.4)
+			sun.light_energy = 0.8
+		else: # Morning/Day
+			sun.light_color = Color(1.0, 1.0, 0.9)
+			sun.light_energy = 1.0
+

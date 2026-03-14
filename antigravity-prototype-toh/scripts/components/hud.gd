@@ -3,6 +3,7 @@ class_name HUD
 
 @onready var virtual_pad = $VirtualPad
 @onready var party_label = $UIContainer/BottomArea/HBoxContainer/PartyLabel
+@onready var time_label = $UIContainer/BottomArea/HBoxContainer/TimeLabel
 @onready var resource_label = $UIContainer/BottomArea/HBoxContainer/ResourceLabel
 @onready var return_button = $UIContainer/BottomArea/HBoxContainer/ReturnButton
 @onready var upgrade_button = $UIContainer/UpgradeButton
@@ -36,6 +37,18 @@ func _ready() -> void:
 		
 		# パーティ数の更新表示
 		update_party_count(GameStateManager.max_party_size)
+		
+	if TimeManager:
+		TimeManager.time_updated.connect(_on_time_updated)
+		_on_time_updated(TimeManager.time, TimeManager.is_night)
+
+func _on_time_updated(_current_time: float, is_night: bool) -> void:
+	if time_label:
+		time_label.text = "Time: " + ("Night" if is_night else "Day")
+		if is_night:
+			time_label.modulate = Color(0.6, 0.6, 1.0)
+		else:
+			time_label.modulate = Color(1.0, 1.0, 0.6)
 
 func _process(_delta: float) -> void:
 	var players = get_tree().get_nodes_in_group("Player")
