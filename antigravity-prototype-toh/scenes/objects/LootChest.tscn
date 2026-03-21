@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/components/loot_chest.gd" id="1_lchest"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lchest"]
+size = Vector3(1, 1, 1)
+
+[node name="LootChest" type="Area3D" groups=["Loot"]]
+script = ExtResource("1_lchest")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_lchest")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+size = Vector3(0.6, 0.4, 0.4)
+material_override = null
+albedo_color = Color(1, 0.84, 0, 1) # ゴールド
+
+[node name="CSGBox3D_Lid" type="CSGBox3D" parent="CSGBox3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+size = Vector3(0.65, 0.1, 0.45)
+albedo_color = Color(0.8, 0.6, 0, 1)

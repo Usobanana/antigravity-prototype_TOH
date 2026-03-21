@@ -54,24 +54,33 @@ func _on_clear_enemies():
 	print("Debug: Cleared all enemies")
 
 func _on_reset_game():
-	GameStateManager.resources = {"wood": 0, "stone": 0, "iron": 0}
-	GameStateManager.max_party_size = 3
-	GameStateManager.base_level = 1
-	GameStateManager.tent_level = 1
-	GameStateManager.blacksmith_level = 0
+	if GameStateManager:
+		GameStateManager.wood = 0
+		GameStateManager.stone = 0
+		GameStateManager.iron = 0
+		GameStateManager.bag_wood = 0
+		GameStateManager.bag_stone = 0
+		GameStateManager.bag_iron = 0
+		GameStateManager.max_party_size = 1
+		GameStateManager.current_party_size = 1
+		GameStateManager.resources_changed.emit(0,0,0,0,0,0, GameStateManager.max_bag_capacity)
+		
 	get_tree().reload_current_scene()
 	print("Debug: Game State Reset")
 
 func _on_toggle_grid():
-	var grid = get_tree().current_scene.get_node_or_null("World/NavigationRegion3D/Grid")
+	var grid = get_tree().current_scene.get_node_or_null("Grid")
 	if not grid:
-		grid = get_tree().current_scene.get_node_or_null("World/Grid")
-		
+		# NavigationRegion3Dの下にある可能性も考慮
+		grid = get_tree().current_scene.get_node_or_null("World/NavigationRegion3D/Grid")
+		if not grid:
+			grid = get_tree().current_scene.get_node_or_null("NavigationRegion3D/Grid")
+			
 	if grid:
 		grid.visible = !grid.visible
 		print("Debug: Grid visibility toggled to ", grid.visible)
 	else:
-		print("Debug: Grid not found in scene")
+		print("Debug: Grid not found in current scene: ", get_tree().current_scene.name)
 
 func _on_toggle_frames():
 	# 全てのSprite3Dを探して枠（MeshInstance3D）を追加/表示切替

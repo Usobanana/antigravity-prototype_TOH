@@ -127,8 +127,44 @@ theme_override_font_sizes/font_size = 24
 text = "Upgrade"
 
 [node name="DebugButton" type="Button" parent="UIContainer"]
-self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(80, 40)
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-flat = true
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 90.0
+offset_bottom = 50.0
+theme_override_font_sizes/font_size = 14
+text = "Debug"
+
+[node name="QuestUI" type="Control" parent="UIContainer"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -300.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 120.0
+grow_horizontal = 0
+
+[node name="ColorRect" type="ColorRect" parent="UIContainer/QuestUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.470588)
+
+[node name="QuestLabel" type="Label" parent="UIContainer/QuestUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 18
+text = "Quest: Loading..."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3

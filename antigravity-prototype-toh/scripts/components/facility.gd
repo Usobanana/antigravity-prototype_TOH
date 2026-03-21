@@ -5,6 +5,8 @@ class_name Facility
 @export var base_cost_wood: int = 10
 @export var base_cost_stone: int = 5
 @export var base_cost_iron: int = 0
+@export var level: int = 1
+@export var grid_size: int = 2 # 基本2x2マス
 
 var current_level: int = 1
 
@@ -12,7 +14,7 @@ var current_level: int = 1
 @onready var upgrade_button_hud: Button = null
 
 func _ready() -> void:
-	_update_label()
+	_update_visuals()
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 	
@@ -66,8 +68,20 @@ func try_upgrade() -> bool:
 		current_level += 1
 		_apply_upgrade_effect()
 		_update_label()
+		_update_visuals() # ビジュアル更新
 		return true
 	return false
+
+func _update_visuals() -> void:
+	# レベルが上がるごとに少しずつ大きくする（10%ずつ）
+	var new_scale = 1.0 + (current_level - 1) * 0.1
+	var tween = create_tween()
+	tween.tween_property(self, "scale", Vector3(new_scale, new_scale, new_scale), 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	
+	# レベル5以上で豪華な色（ゴールド）を混ぜる演出
+	if current_level >= 5:
+		if label_3d:
+			label_3d.modulate = Color(1, 0.84, 0) # Gold
 
 func _apply_upgrade_effect() -> void:
 	if facility_name == "Tent":
@@ -76,3 +90,9 @@ func _apply_upgrade_effect() -> void:
 		GameStateManager.upgrade_damage()
 	elif facility_name == "Storage":
 		GameStateManager.upgrade_bag_capacity()
+	elif facility_name == "Palace":
+		# 王宮のアップグレードは全リソースを少し増やす「贅沢」なボーナス
+		GameStateManager.add_resource("wood", 100 * current_level)
+		GameStateManager.add_resource("stone", 100 * current_level)
+		GameStateManager.add_resource("iron", 50 * current_level)
+		GameStateManager.upgrade_party_size() # パーティ枠も増える

@@ -23,6 +23,7 @@ config/icon="res://icon.svg"
 
 GameStateManager="*res://scripts/autoload/game_state_manager.gd"
 TimeManager="*res://scripts/autoload/time_manager.gd"
+QuestManager="*res://scripts/autoload/quest_manager.gd"
 
 [display]
 

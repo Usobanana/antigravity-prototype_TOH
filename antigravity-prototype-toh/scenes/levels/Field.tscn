@@ -1,56 +1,42 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=19 format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/actors/Player.tscn" id="1_player"]
-[ext_resource type="PackedScene" path="res://scenes/actors/CameraController.tscn" id="2_cam"]
-[ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="3_hud"]
-[ext_resource type="PackedScene" path="res://scenes/objects/Tree.tscn" id="4_tree"]
-[ext_resource type="PackedScene" path="res://scenes/objects/Stone.tscn" id="5_stone"]
-[ext_resource type="PackedScene" path="res://scenes/actors/Enemy.tscn" id="6_enemy"]
-[ext_resource type="PackedScene" path="res://scenes/objects/Spawner.tscn" id="7_spawner"]
-[ext_resource type="PackedScene" path="res://scenes/actors/FastEnemy.tscn" id="8_fenemy"]
-[ext_resource type="PackedScene" path="res://scenes/actors/RangedEnemy.tscn" id="9_renemy"]
-[ext_resource type="PackedScene" path="res://scenes/actors/BossEnemy.tscn" id="10_boss"]
-[ext_resource type="Script" path="res://scripts/components/field.gd" id="11_field"]
-[ext_resource type="PackedScene" path="res://scenes/objects/IronOre.tscn" id="12_iron"]
+[ext_resource type="Script" path="res://scripts/components/field.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/actors/Player.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/actors/CameraController.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/objects/Tree.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/objects/Stone.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/actors/Enemy.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/objects/Spawner.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/actors/Follower.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/levels/Base.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://scenes/objects/IronOre.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://scenes/objects/AreaUnlocker.tscn" id="13"]
+[ext_resource type="PackedScene" path="res://scenes/objects/FogWall.tscn" id="14"]
+[ext_resource type="PackedScene" path="res://scenes/objects/SurvivorCage.tscn" id="15"]
+[ext_resource type="Texture2D" path="res://scenes/levels/levels_grid.png" id="16"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
-size = Vector3(40, 1, 40)
+size = Vector3(100, 1, 100)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
 albedo_color = Color(0.2, 0.5, 0.2, 1)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_wall"]
-size = Vector3(40, 2, 1)
+[sub_resource type="PlaneMesh" id="PlaneMesh_grid"]
+size = Vector2(100, 100)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_inner_wall"]
-size = Vector3(20, 2, 1)
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_field_grid"]
-size = Vector2(40, 40)
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_field_grid"]
-size = Vector2(32, 32)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_field_grid"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grid"]
 transparency = 1
-albedo_color = Color(1, 1, 1, 0.2)
-albedo_texture = SubResource("PlaceholderTexture2D_field_grid")
-uv1_scale = Vector3(40, 40, 1)
-
-[sub_resource type="Environment" id="Environment_field"]
-background_mode = 2
-ambient_light_source = 2
-ambient_light_color = Color(0.2, 0.2, 0.2, 1)
-ambient_light_energy = 0.5
+albedo_texture = ExtResource(16)
+uv1_scale = Vector3(100, 100, 1)
+texture_filter = 0
 
 [node name="Field" type="Node3D"]
-script = ExtResource("11_field")
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_field")
+script = ExtResource(1)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 10, 0)
+shadow_enabled = true
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 
@@ -61,135 +47,86 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 shape = SubResource("BoxShape3D_floor")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D/Floor"]
-size = Vector3(40, 1, 40)
+size = Vector3(100, 1, 100)
 material = SubResource("StandardMaterial3D_floor")
 
-[node name="Grid" type="MeshInstance3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
-visible = false
-mesh = SubResource("PlaneMesh_field_grid")
-material_override = SubResource("StandardMaterial3D_field_grid")
+[node name="Player" parent="." instance=ExtResource(2)]
 
-[node name="WallNorth" type="StaticBody3D" parent="NavigationRegion3D"]
+[node name="CameraController" parent="." instance=ExtResource(3)]
 
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -20)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WallNorth"]
-shape = SubResource("BoxShape3D_wall")
-
-[node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D/WallNorth"]
-size = Vector3(40, 2, 1)
-material = SubResource("StandardMaterial3D_floor")
-
-[node name="WallSouth" type="StaticBody3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 20)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WallSouth"]
-shape = SubResource("BoxShape3D_wall")
-
-[node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D/WallSouth"]
-size = Vector3(40, 2, 1)
-material = SubResource("StandardMaterial3D_floor")
-
-[node name="WallEast" type="StaticBody3D" parent="NavigationRegion3D"]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 20, 1, 0)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WallEast"]
-shape = SubResource("BoxShape3D_wall")
-
-[node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D/WallEast"]
-size = Vector3(40, 2, 1)
-material = SubResource("StandardMaterial3D_floor")
-
-[node name="WallWest" type="StaticBody3D" parent="NavigationRegion3D"]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -20, 1, 0)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/WallWest"]
-shape = SubResource("BoxShape3D_wall")
-
-[node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D/WallWest"]
-size = Vector3(40, 2, 1)
-material = SubResource("StandardMaterial3D_floor")
-
-[node name="InnerWall1" type="StaticBody3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1, 0)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/InnerWall1"]
-shape = SubResource("BoxShape3D_inner_wall")
-
-[node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D/InnerWall1"]
-size = Vector3(20, 2, 1)
-material = SubResource("StandardMaterial3D_floor")
-
-[node name="InnerWall2" type="StaticBody3D" parent="NavigationRegion3D"]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 10, 1, -10)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/InnerWall2"]
-shape = SubResource("BoxShape3D_inner_wall")
-
-[node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D/InnerWall2"]
-size = Vector3(20, 2, 1)
-material = SubResource("StandardMaterial3D_floor")
-
-[node name="Player" parent="." instance=ExtResource("1_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-
-[node name="CameraController" parent="." instance=ExtResource("2_cam")]
-
-[node name="HUD" parent="." instance=ExtResource("3_hud")]
+[node name="HUD" parent="." instance=ExtResource(8)]
 
 [node name="Allies" type="Node3D" parent="."]
 
 [node name="Enemies" type="Node3D" parent="."]
 
-[node name="EnemySpawner1" parent="Enemies" instance=ExtResource("7_spawner")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 12)
-spawn_scene = ExtResource("6_enemy")
-respawn_time = 3.0
+[node name="EnemySpawner1" parent="Enemies" instance=ExtResource(7)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -15)
+spawn_scene = ExtResource(6)
+respawn_time = 10.0
 
-[node name="EnemySpawner2" parent="Enemies" instance=ExtResource("7_spawner")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 8)
-spawn_scene = ExtResource("8_fenemy")
-respawn_time = 4.0
-
-[node name="EnemySpawner3" parent="Enemies" instance=ExtResource("7_spawner")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -15)
-spawn_scene = ExtResource("9_renemy")
-respawn_time = 5.0
-
-[node name="EnemySpawner4" parent="Enemies" instance=ExtResource("7_spawner")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, -15)
-spawn_scene = ExtResource("10_boss")
-respawn_time = 30.0
+[node name="EnemySpawner2" parent="Enemies" instance=ExtResource(7)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0, 20)
+spawn_scene = ExtResource(6)
+respawn_time = 12.0
 
 [node name="Resources" type="Node3D" parent="."]
 
-[node name="TreeSpawner1" parent="Resources" instance=ExtResource("7_spawner")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -5)
-spawn_scene = ExtResource("4_tree")
-respawn_time = 5.0
+[node name="Tree1" parent="Resources" instance=ExtResource(4)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -18)
 
-[node name="TreeSpawner2" parent="Resources" instance=ExtResource("7_spawner")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -12)
-spawn_scene = ExtResource("4_tree")
-respawn_time = 5.0
+[node name="Tree2" parent="Resources" instance=ExtResource(4)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, -35)
 
-[node name="StoneSpawner1" parent="Resources" instance=ExtResource("7_spawner")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 10)
-spawn_scene = ExtResource("5_stone")
-respawn_time = 8.0
+[node name="Tree3" parent="Resources" instance=ExtResource(4)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 0, 10)
 
-[node name="StoneSpawner2" parent="Resources" instance=ExtResource("7_spawner")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -5)
-spawn_scene = ExtResource("5_stone")
-respawn_time = 8.0
+[node name="Stone1" parent="Resources" instance=ExtResource(5)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 22)
 
-[node name="IronOreSpawner1" parent="Resources" instance=ExtResource("7_spawner")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 15)
-spawn_scene = ExtResource("12_iron")
-respawn_time = 12.0
+[node name="Stone2" parent="Resources" instance=ExtResource(5)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0, -25)
 
-[node name="IronOreSpawner2" parent="Resources" instance=ExtResource("7_spawner")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 12)
-spawn_scene = ExtResource("12_iron")
-respawn_time = 12.0
+[node name="Iron1" parent="Resources" instance=ExtResource(12)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, -5)
+
+[node name="Iron2" parent="Resources" instance=ExtResource(12)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, 45)
+
+[node name="Progression" type="Node3D" parent="."]
+
+[node name="AreaUnlocker_South" parent="Progression" instance=ExtResource(13)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40)
+area_name = "South Field"
+cost_wood = 20
+cost_stone = 10
+fog_group = "Fog_South"
+
+[node name="FogWall_South1" parent="Progression" groups=["Fog_South"] instance=ExtResource(14)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 45)
+
+[node name="FogWall_South2" parent="Progression" groups=["Fog_South"] instance=ExtResource(14)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 45)
+
+[node name="FogWall_South3" parent="Progression" groups=["Fog_South"] instance=ExtResource(14)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 45)
+
+[node name="FogWall_South4" parent="Progression" groups=["Fog_South"] instance=ExtResource(14)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, 45)
+
+[node name="Survivors" type="Node3D" parent="."]
+
+[node name="SurvivorCage1" parent="Survivors" instance=ExtResource(15)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, 15)
+rescue_cost_wood = 10
+
+[node name="SurvivorCage2" parent="Survivors" instance=ExtResource(15)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, -5)
+rescue_cost_wood = 15
+rescue_cost_stone = 5
+
+[node name="Grid" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+visible = false
+mesh = SubResource("PlaneMesh_grid")
+surface_material_override/0 = SubResource("StandardMaterial3D_grid")

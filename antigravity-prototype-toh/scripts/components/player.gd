@@ -6,7 +6,14 @@ enum State {
 	MOVE,
 	ATTACK,
 	GATHER,
-	KNOCKBACK
+	KNOCKBACK,
+	DEAD
+}
+
+enum SkillType {
+	SMASH,
+	WHIRLWIND,
+	HEAL
 }
 
 @export var move_speed: float = 5.0
@@ -25,6 +32,13 @@ var knockback_velocity: Vector3 = Vector3.ZERO
 
 var skill_energy: float = 0.0
 var max_skill_energy: float = 100.0
+var current_skill_type: SkillType = SkillType.SMASH
+
+@export var max_health: int = 100
+var current_health: int = 100
+
+const HealthBarScene = preload("res://scenes/ui/HealthBar.tscn")
+var health_bar: Node3D = null
 
 const TargetMarkerScene = preload("res://scenes/ui/TargetMarker.tscn")
 const GatherProgressScene = preload("res://scenes/ui/GatherProgress.tscn")
@@ -41,6 +55,14 @@ var active_progress: Node3D = null
 @onready var sprite = $Sprite3D
 @onready var enemy_detector: Area3D = $EnemyDetectionRange
 @onready var gather_detector: Area3D = $GatheringRange
+
+func _ready() -> void:
+	current_health = max_health
+	if HealthBarScene:
+		health_bar = HealthBarScene.instantiate()
+		add_child(health_bar)
+		if health_bar.has_method("update_health"):
+			health_bar.update_health(current_health, max_health)
 
 func _physics_process(delta: float) -> void:
 	_handle_movement(delta)
@@ -228,13 +250,49 @@ func _get_closest_gatherable() -> Node3D:
 				closest = item
 	return closest
 
+func take_damage(amount: int, _die_direction: Vector3 = Vector3.ZERO) -> void:
+	if current_state == State.DEAD: return
+	
+	current_health -= amount
+	if health_bar and health_bar.has_method("update_health"):
+		health_bar.update_health(current_health, max_health)
+		
+	# ヒットエフェクト（Enemyと同じものを流用）
+	const HitEffectScene = preload("res://scenes/objects/HitEffect.tscn")
+	if HitEffectScene:
+		var effect = HitEffectScene.instantiate()
+		get_tree().current_scene.add_child(effect)
+		effect.global_position = global_position
+		
+	if current_health <= 0:
+		_die()
+
+func _die() -> void:
+	current_state = State.DEAD
+	# 死亡時は赤くして倒れる演出
+	sprite.modulate = Color(1, 0, 0, 0.5)
+	rotation.x = deg_to_rad(90)
+	# 数秒後にベースへ戻るなどの処理が必要
+	print("Player Dead")
+
 func use_skill() -> void:
 	if skill_energy < max_skill_energy:
 		return
 		
-	# ゲージを全消費
 	skill_energy = 0.0
 	
+	match current_skill_type:
+		SkillType.SMASH:
+			_skill_smash()
+			current_skill_type = SkillType.WHIRLWIND # 次のスキルへ
+		SkillType.WHIRLWIND:
+			_skill_whirlwind()
+			current_skill_type = SkillType.HEAL
+		SkillType.HEAL:
+			_skill_heal()
+			current_skill_type = SkillType.SMASH
+
+func _skill_smash() -> void:
 	# 周囲のすべての敵に大ダメージを与える
 	if enemy_detector:
 		var enemies = enemy_detector.get_overlapping_bodies()
@@ -242,16 +300,45 @@ func use_skill() -> void:
 			if enemy.is_in_group("Enemy") and enemy.has_method("take_damage"):
 				var hit_dir = enemy.global_position - global_position
 				hit_dir.y = 0
-				var skill_damage = attack_damage * 5 # 必殺技は通常攻撃の5倍ダメージ
+				var skill_damage = attack_damage * 5
 				if GameStateManager:
 					skill_damage += GameStateManager.player_damage_bonus * 5
 				enemy.take_damage(skill_damage, hit_dir)
 				
-				# ヒット時に敵の上に専用テキストを浮かせる（任意）
 				if FloatingTextScene:
-					var txt_origin = FloatingTextScene.instantiate()
-					get_tree().current_scene.add_child(txt_origin)
-					txt_origin.global_position = enemy.global_position
-					txt_origin.global_position.y += 2.0
-					if txt_origin.has_method("set_message"):
-						txt_origin.set_message("SMASH!!")
+					var txt = FloatingTextScene.instantiate()
+					get_tree().current_scene.add_child(txt)
+					txt.global_position = enemy.global_position + Vector3(0, 2, 0)
+					if txt.has_method("set_message"):
+						txt.set_message("SMASH!!")
+
+func _skill_whirlwind() -> void:
+	# 3秒間、周囲にダメージを与え続ける（簡易的に即時AoEを3連発するなど）
+	for i in range(3):
+		await get_tree().create_timer(0.3).timeout
+		if enemy_detector:
+			var enemies = enemy_detector.get_overlapping_bodies()
+			for enemy in enemies:
+				if enemy.is_in_group("Enemy") and enemy.has_method("take_damage"):
+					enemy.take_damage(attack_damage * 2, Vector3.ZERO)
+			
+			if FloatingTextScene:
+				var txt = FloatingTextScene.instantiate()
+				get_tree().current_scene.add_child(txt)
+				txt.global_position = global_position + Vector3(randf(), 2, randf())
+				if txt.has_method("set_message"):
+					txt.set_message("SPIN!")
+
+func _skill_heal() -> void:
+	# 自分のHPを50%回復
+	current_health = min(current_health + max_health * 0.5, max_health)
+	if health_bar and health_bar.has_method("update_health"):
+		health_bar.update_health(current_health, max_health)
+		
+	if FloatingTextScene:
+		var txt = FloatingTextScene.instantiate()
+		get_tree().current_scene.add_child(txt)
+		txt.global_position = global_position + Vector3(0, 2, 0)
+		txt.modulate = Color(0, 1, 0) # 緑色
+		if txt.has_method("set_message"):
+			txt.set_message("HEAL +50")

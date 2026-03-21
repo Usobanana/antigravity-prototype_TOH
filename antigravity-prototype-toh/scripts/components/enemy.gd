@@ -22,11 +22,23 @@ var knockback_velocity: Vector3 = Vector3.ZERO
 var current_health: int
 
 const FloatingTextScene = preload("res://scenes/ui/FloatingText.tscn")
+const HitEffectScene = preload("res://scenes/objects/HitEffect.tscn")
+const HealthBarScene = preload("res://scenes/ui/HealthBar.tscn")
+const LootChestScene = preload("res://scenes/objects/LootChest.tscn")
+
+var health_bar: Node3D = null
 
 @onready var sprite = $Sprite3D
 
 func _ready() -> void:
 	current_health = max_health
+	
+	# HPバーの生成
+	if HealthBarScene:
+		health_bar = HealthBarScene.instantiate()
+		add_child(health_bar)
+		if health_bar.has_method("update_health"):
+			health_bar.update_health(current_health, max_health)
 
 func _physics_process(delta: float) -> void:
 	if current_state == State.KNOCKBACK:
@@ -71,6 +83,10 @@ func _process_ai(_delta: float) -> void:
 func take_damage(amount: int, hit_direction: Vector3 = Vector3.ZERO) -> void:
 	current_health -= amount
 	
+	# HPバーの更新
+	if health_bar and health_bar.has_method("update_health"):
+		health_bar.update_health(current_health, max_health)
+	
 	# ノックバック処理
 	current_state = State.KNOCKBACK
 	knockback_timer = 0.2
@@ -83,15 +99,29 @@ func take_damage(amount: int, hit_direction: Vector3 = Vector3.ZERO) -> void:
 	# ダメージポップアップの生成
 	if FloatingTextScene:
 		var text_node = FloatingTextScene.instantiate()
-		add_child(text_node)
+		get_tree().current_scene.add_child(text_node)
+		text_node.global_position = global_position + Vector3(0, 1.5, 0)
 		if text_node.has_method("set_value"):
 			text_node.set_value(amount)
 			
-	# スケールを少し変えてダメージを受けた感触などを出しても良い
+	# ヒットエフェクトの生成
+	if HitEffectScene:
+		var effect = HitEffectScene.instantiate()
+		get_tree().current_scene.add_child(effect)
+		if effect.has_method("setup"):
+			effect.setup(global_position)
 	
 	if current_health <= 0:
 		die()
 
 func die() -> void:
 	# 死亡エフェクトやアイテムドロップ処理
+	if LootChestScene:
+		var chest = LootChestScene.instantiate()
+		get_tree().current_scene.add_child(chest)
+		chest.global_position = global_position
+		
+	if QuestManager:
+		QuestManager.notify_progress(1, 1) # KILL_ENEMIES
+		
 	queue_free()

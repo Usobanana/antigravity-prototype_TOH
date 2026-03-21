@@ -10,13 +10,17 @@ var bag_iron: int = 0
 var max_bag_capacity: int = 20
 
 var max_party_size: int = 1
+var current_party_size: int = 1 # 初期人数
 var player_damage_bonus: int = 0
 
 signal resources_changed(wood: int, stone: int, iron: int, bag_wood: int, bag_stone: int, bag_iron: int, max_bag: int)
+signal party_member_added(new_count: int, position: Vector3, hero_type: int)
 
 func add_resource(type: String, amount: int) -> void:
 	if type == "wood":
 		wood += amount
+		if QuestManager:
+			QuestManager.notify_progress(0, amount) # COLLECT_WOOD
 	elif type == "stone":
 		stone += amount
 	elif type == "iron":
@@ -64,6 +68,17 @@ func spend_resources(cost_wood: int, cost_stone: int, cost_iron: int = 0) -> boo
 # 拠点拡張関連のアップグレード
 func upgrade_party_size() -> void:
 	max_party_size += 1
+
+func add_party_member(spawn_pos: Vector3 = Vector3.ZERO, hero_type: int = -1) -> bool:
+	if current_party_size < max_party_size:
+		current_party_size += 1
+		# タイプが指定されていない場合はランダム（0:Knight, 1:Archer, 2:Healer）
+		var final_type = hero_type
+		if final_type < 0:
+			final_type = randi() % 3
+		party_member_added.emit(current_party_size, spawn_pos, final_type)
+		return true
+	return false
 
 func upgrade_damage() -> void:
 	player_damage_bonus += 5

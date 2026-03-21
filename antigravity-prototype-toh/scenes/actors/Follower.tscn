@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/components/follower.gd" id="1_follower"]
 [ext_resource type="Texture2D" path="res://assets/placeholders/follower.png" id="2_fol"]
@@ -18,12 +18,12 @@ shader_parameter/texture_albedo = ExtResource("2_fol")
 script = ExtResource("1_follower")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.56, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("CylinderShape3D_follower")
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.56, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.768, 0)
 material_override = SubResource("ShaderMaterial_follower")
-pixel_size = 0.005
+pixel_size = 0.003
 billboard = 1
 texture = ExtResource("2_fol")

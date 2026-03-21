@@ -2,7 +2,7 @@ extends Node
 
 # 0.0 to 1.0 (0.0 = Morning, 0.5 = Evening, 1.0 = Night/Cycle End)
 var time: float = 0.2 # Start at 0.2 (Daytime)
-var day_duration: float = 60.0 # 60 seconds for a full cycle (adjust as needed)
+var day_duration: float = 600.0 # 10 minutes (600 seconds) for a full cycle
 
 var is_night: bool = false
 

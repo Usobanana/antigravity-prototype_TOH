@@ -5,6 +5,7 @@ class_name HUD
 @onready var party_label = $UIContainer/BottomArea/HBoxContainer/PartyLabel
 @onready var time_label = $UIContainer/BottomArea/HBoxContainer/TimeLabel
 @onready var resource_label = $UIContainer/BottomArea/HBoxContainer/ResourceLabel
+@onready var quest_label = $UIContainer/QuestUI/QuestLabel
 @onready var return_button = $UIContainer/BottomArea/HBoxContainer/ReturnButton
 @onready var upgrade_button = $UIContainer/UpgradeButton
 
@@ -28,9 +29,6 @@ func _ready() -> void:
 		skill_button.pressed.connect(_on_skill_pressed)
 	if debug_button:
 		debug_button.pressed.connect(_on_debug_pressed)
-		# デバッグビルド時以外は隠す（あるいはフラグ管理）
-		if not OS.is_debug_build():
-			debug_button.hide()
 		
 	# シーンに応じてボタンの文字を変更
 	if get_tree().current_scene and get_tree().current_scene.name == "Base":
@@ -68,9 +66,19 @@ func _process(_delta: float) -> void:
 			if p.skill_energy >= p.max_skill_energy:
 				skill_button.disabled = false
 				skill_button.modulate = Color(1.0, 0.5, 0.0) # 準備完了はオレンジ色
+				
+				# スキル名の表示（ボタンのテキストなどを利用）
+				if "current_skill_type" in p:
+					var skill_name = "SMASH"
+					match p.current_skill_type:
+						0: skill_name = "SMASH"
+						1: skill_name = "SPIN"
+						2: skill_name = "HEAL"
+					skill_button.text = skill_name
 			else:
 				skill_button.disabled = true
 				skill_button.modulate = Color(1.0, 1.0, 1.0, 0.5)
+				skill_button.text = ""
 
 func update_party_count(max_val: int) -> void:
 	party_label.text = "Party Size: %d" % max_val
@@ -126,6 +134,6 @@ func _on_skill_pressed() -> void:
 			players[0].use_skill()
 
 func _on_debug_pressed() -> void:
-	if debug_menu:
+	if debug_menu and debug_menu.has_method("toggle"):
 		debug_menu.toggle()
 

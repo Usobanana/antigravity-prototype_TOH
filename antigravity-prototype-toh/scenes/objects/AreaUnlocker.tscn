@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/components/area_unlocker.gd" id="1_aunlock"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_unlock"]
+size = Vector3(2, 2, 2)
+
+[node name="AreaUnlocker" type="Area3D" groups=["Facility"]]
+script = ExtResource("1_aunlock")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_unlock")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+pixel_size = 0.005
+billboard = 1
+text = "Unlock Area"
+font_size = 48
+outline_size = 12
+
+[node name="MeshInstance3D" type="CSGBox3D" parent="."]
+size = Vector3(1, 0.1, 1)
+material_override = null

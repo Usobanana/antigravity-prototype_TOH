@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/components/survivor_cage.gd" id="1_scage"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_scage"]
+size = Vector3(2, 2, 2)
+
+[node name="SurvivorCage" type="Area3D" groups=["Facility"]]
+script = ExtResource("1_scage")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_scage")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
+pixel_size = 0.005
+billboard = 1
+text = "Rescue"
+font_size = 42
+outline_size = 12
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+size = Vector3(1.5, 1.5, 1.5)
+material_override = null
+# デフォルトで少し檻っぽい色(グレー)にする
+albedo_color = Color(0.4, 0.4, 0.4, 1)
+
+[node name="CSGBox3D_Inner" type="CSGBox3D" parent="CSGBox3D"]
+operation = 2
+size = Vector3(1.3, 1.3, 1.3)

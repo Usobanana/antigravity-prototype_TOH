@@ -1,35 +1,36 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=13 format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/actors/Player.tscn" id="1_player"]
-[ext_resource type="PackedScene" path="res://scenes/actors/CameraController.tscn" id="2_cam"]
-[ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="3_hud"]
-[ext_resource type="PackedScene" path="res://scenes/objects/Facility.tscn" id="4_fac"]
+[ext_resource type="Script" path="res://scripts/components/base.gd" id="0"]
+
+[ext_resource type="PackedScene" path="res://scenes/actors/Player.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/actors/CameraController.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/objects/Facility.tscn" id="4"]
+[ext_resource type="Texture2D" path="res://scenes/levels/levels_grid.png" id="5"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
-size = Vector3(15, 1, 15)
+size = Vector3(40, 1, 40)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
 albedo_color = Color(0.6, 0.5, 0.3, 1)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_grid"]
-size = Vector2(15, 15)
+[sub_resource type="PlaneMesh" id="PlaneMesh_grid_base"]
+size = Vector2(40, 40)
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_grid"]
-size = Vector2(32, 32)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grid"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grid_base"]
 transparency = 1
-albedo_color = Color(1, 1, 1, 0.2)
-albedo_texture = SubResource("PlaceholderTexture2D_grid")
-uv1_scale = Vector3(15, 15, 1)
+albedo_texture = ExtResource(5)
+uv1_scale = Vector3(40, 40, 1)
+texture_filter = 0
 
 [sub_resource type="Environment" id="Environment_base"]
 background_mode = 2
 ambient_light_source = 2
 ambient_light_color = Color(0.3, 0.3, 0.3, 1)
-ambient_light_energy = 0.6
+ambient_light_energy = 0.8
 
 [node name="Base" type="Node3D"]
+script = ExtResource(0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_base")
@@ -46,40 +47,50 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 shape = SubResource("BoxShape3D_floor")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D/Floor"]
-size = Vector3(15, 1, 15)
+size = Vector3(40, 1, 40)
 material = SubResource("StandardMaterial3D_floor")
 
-[node name="Grid" type="MeshInstance3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
-visible = false
-mesh = SubResource("PlaneMesh_grid")
-material_override = SubResource("StandardMaterial3D_grid")
+[node name="Player" parent="." instance=ExtResource(1)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
 
-[node name="Player" parent="." instance=ExtResource("1_player")]
+[node name="CameraController" parent="." instance=ExtResource(2)]
 
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-
-[node name="CameraController" parent="." instance=ExtResource("2_cam")]
-
-[node name="HUD" parent="." instance=ExtResource("3_hud")]
+[node name="HUD" parent="." instance=ExtResource(3)]
 
 [node name="Facilities" type="Node3D" parent="."]
 
-[node name="Tent" parent="Facilities" instance=ExtResource("4_fac")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -3)
+[node name="Palace" parent="Facilities" instance=ExtResource(4)]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+facility_name = "Palace"
+base_cost_wood = 100
+base_cost_stone = 100
+base_cost_iron = 50
+grid_size = 4
+
+[node name="Tent" parent="Facilities" instance=ExtResource(4)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10)
 facility_name = "Tent"
 base_cost_wood = 10
 base_cost_stone = 5
+grid_size = 2
 
-[node name="Blacksmith" parent="Facilities" instance=ExtResource("4_fac")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, -3)
+[node name="Blacksmith" parent="Facilities" instance=ExtResource(4)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10)
 facility_name = "Blacksmith"
 base_cost_wood = 15
 base_cost_stone = 10
 base_cost_iron = 5
+grid_size = 2
 
-[node name="Storage" parent="Facilities" instance=ExtResource("4_fac")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+[node name="Storage" parent="Facilities" instance=ExtResource(4)]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15)
 facility_name = "Storage"
 base_cost_wood = 20
 base_cost_stone = 15
+grid_size = 2
+
+[node name="Grid" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+visible = false
+mesh = SubResource("PlaneMesh_grid_base")
+surface_material_override/0 = SubResource("StandardMaterial3D_grid_base")
