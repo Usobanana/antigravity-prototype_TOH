@@ -40,9 +40,9 @@ func _on_time_updated(current_time: float, is_night: bool) -> void:
 	
 	# Adjust light color and energy
 	if is_night:
-		# Night colors (cool/dark)
-		sun.light_color = Color(0.2, 0.2, 0.5)
-		sun.light_energy = 0.5
+		# Night colors (slightly brighter blue-grey for better visibility)
+		sun.light_color = Color(0.4, 0.4, 0.7)
+		sun.light_energy = 0.8
 	else:
 		# Day colors (warm/bright)
 		if current_time > 0.5: # Evening

@@ -37,8 +37,17 @@ albedo_color = Color(1, 1, 1, 0.2)
 albedo_texture = SubResource("PlaceholderTexture2D_field_grid")
 uv1_scale = Vector3(40, 40, 1)
 
+[sub_resource type="Environment" id="Environment_field"]
+background_mode = 2
+ambient_light_source = 2
+ambient_light_color = Color(0.2, 0.2, 0.2, 1)
+ambient_light_energy = 0.5
+
 [node name="Field" type="Node3D"]
 script = ExtResource("11_field")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_field")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 10, 0)
